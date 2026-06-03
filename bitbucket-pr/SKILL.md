@@ -12,12 +12,11 @@ Manage pull requests on Bitbucket Cloud via the REST API.
 
 ## Auth & environment
 
-Bitbucket Cloud now uses **API tokens with scopes** (app passwords deprecated Sept 2025).
-Authentication is HTTP Basic: email as username, API token as password.
+Authentication is HTTP Basic: Atlassian email as username, API token as password.
 
 Required environment variables:
-- `JIRA_EMAIL` — Atlassian account email (already set, doubles as Bitbucket username)
-- `BITBUCKET_TOKEN` — API token created at bitbucket.org → Personal settings → API tokens
+- `JIRA_EMAIL` — your Atlassian account email
+- `BITBUCKET_TOKEN` — API token from bitbucket.org → Personal settings → API tokens
   - Required scopes: **Pull requests: Read + Write**
 
 If either is missing, tell the user and stop.

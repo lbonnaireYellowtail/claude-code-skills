@@ -65,7 +65,7 @@ If the user types `learn` alone with no topic, ask them what topic they want to 
 
 ### 5. Session Summary (save to memory)
 
-Append a summary to `/Users/louisbonnaire/.claude/projects/-Users-louisbonnaire/memory/learn-sessions.md`:
+Append a summary to `~/.claude/memory/learn-sessions.md` (adjust path to match your memory setup):
 
 - Topic
 - Date

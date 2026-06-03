@@ -14,8 +14,10 @@ Creates a well-formed ADR in `docs/decisions/` with the next available D-XX numb
 
 ## Paths
 
+Set these to match your project structure:
+
 ```
-DOCS_ROOT=/Users/louisbonnaire/design-systems/component-library/docs
+DOCS_ROOT=<path-to-your-docs-root>        # e.g. docs/ or design-system/docs
 DECISIONS=$DOCS_ROOT/decisions/
 ```
 
@@ -30,7 +32,7 @@ DECISIONS=$DOCS_ROOT/decisions/
 ## Step 1 — Assign next D-XX number
 
 ```bash
-ls /Users/louisbonnaire/design-systems/component-library/docs/decisions/D-*.md \
+ls $DECISIONS/D-*.md 2>/dev/null \
   | grep -oE 'D-[0-9]+' | sort -t- -k2 -n | tail -1
 ```
 

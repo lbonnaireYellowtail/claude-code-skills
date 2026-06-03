@@ -9,13 +9,15 @@ triggers:
 
 # Doc-Update
 
-Keeps the component-library docs in sync with the actual state of the codebase by scanning git history and cross-checking each doc type.
+Keeps component-library docs in sync with the actual state of the codebase by scanning git history and cross-checking each doc type.
 
 ## Paths
 
+Set these to match your project structure:
+
 ```
-DOCS_ROOT=/Users/louisbonnaire/design-systems/component-library/docs
-REPO=/Users/louisbonnaire/design-systems/yellowtail-libraries
+DOCS_ROOT=<path-to-your-docs-root>        # e.g. docs/ or design-system/docs
+REPO=<path-to-your-component-library>     # repo where components are implemented
 REFINEMENTS=$DOCS_ROOT/refinements/
 DECISIONS=$DOCS_ROOT/decisions/
 ROADMAP=$DOCS_ROOT/components-roadmap/
@@ -44,13 +46,13 @@ git branch -r --merged origin/master 2>/dev/null
 
 From the output, build a list of:
 - Changed library files (path → component name)
-- Merged branches (branch name → ticket ID if pattern matches `fix/yfe-XXX-*` or `feature/yfe-XXX-*`)
+- Merged branches (branch name → ticket ID if pattern matches `fix/<PROJECT_KEY>-XXX-*` or `feature/<PROJECT_KEY>-XXX-*`)
 
 ---
 
 ## Step 2 — Update refinement doc statuses
 
-For each file in `$REFINEMENTS/YFE-*.md`:
+For each file in `$REFINEMENTS/<PROJECT_KEY>-*.md`:
 
 1. Read the file, extract `**Status:**` and `**Branch:**` fields
 2. If status is `Draft` or `Ready`:
@@ -72,7 +74,7 @@ For each component spec in `$ROADMAP/atoms/`, `$ROADMAP/molecules/`, `$ROADMAP/o
 1. Extract component name from filename (e.g. `avatar.md` → `avatar`)
 2. Check if implementation exists in the repo:
    ```bash
-   find $REPO/libs/component-library-angular/src -name "<component>.component.ts" 2>/dev/null
+   find $REPO -name "<component>.component.ts" 2>/dev/null
    ```
 3. If implementation found and spec still shows `Status: Spec` or no status → note it as "built, spec not updated"
 4. Report these gaps — do NOT auto-edit spec files (they may have deliberate open questions still to resolve)
@@ -98,8 +100,8 @@ Scan changed files from Step 1. For each changed file, check whether:
 Do NOT auto-edit ADRs. Surface as a list:
 ```
 ⚠ Potentially stale ADRs — review manually:
-  D-22 (contract-based theming) — button size override CSS vars added in YFE-137
-  D-23 (icon registration) — icon revert behaviour changed in YFE-136
+  D-22 (contract-based theming) — button size override CSS vars added in <PROJECT_KEY>-137
+  D-23 (icon registration) — icon revert behaviour changed in <PROJECT_KEY>-136
 ```
 
 ---
@@ -112,14 +114,14 @@ Show a structured summary:
 ## Doc-Update Summary — <date>
 
 ### Refinements updated (N)
-  YFE-134 — status: Draft → Implemented (branch merged)
-  YFE-135 — status: Ready → Implemented (Jira: Done)
+  <PROJECT_KEY>-134 — status: Draft → Implemented (branch merged)
+  <PROJECT_KEY>-135 — status: Ready → Implemented (Jira: Done)
 
 ### Component specs with built implementations (not yet marked Built)
-  atoms/spinner.md — implementation found at libs/.../spinner.component.ts
+  atoms/spinner.md — implementation found
 
 ### Todos synced (N)
-  T1 (YFE-130) — still open in Jira
+  T1 (<PROJECT_KEY>-130) — still open in Jira
 
 ### ADRs to review (N)
   D-22, D-23 — see details above

@@ -94,18 +94,19 @@ Follow the implementation plan from the refinement doc **step by step**. For eac
 2. Make the change
 3. Confirm it's done before moving to the next
 
-### Mandatory conventions (from CLAUDE.md — never skip)
+### Conventions (configure these in your CLAUDE.md to match your team's standards)
 
-- `#` prefix for ALL private members — never the `private` keyword
-- `protected` for all template-bound properties/methods
-- Class member order: `inject()` → constructor → variables (signals, computed, inputs, outputs) → methods (public → protected → `#private`)
+These are example Angular conventions — adjust or replace per your project:
+
+- `#` prefix for private members (or use `private` keyword — pick one and be consistent)
+- `protected` for template-bound properties/methods
+- Class member order: `inject()` → constructor → variables (signals, computed, inputs, outputs) → methods
 - `computed`/`effect`: no braces for single-line expressions
 - Strict TypeScript: no `any`, explicit return types, `readonly` for immutable properties
 - New control flow in templates: `@if`, `@for`, `@switch`
 - `ChangeDetectionStrategy.OnPush` on all components
 - BEM naming for SCSS, no `::ng-deep`
 - Full words only — no abbreviations (`column` not `col`, `index` not `idx`, etc.)
-- `[ngClass]` for conditional classes — never `[class.foo]`
 
 ### For new files
 
