@@ -211,7 +211,37 @@ done
 - If a new component was flagged in 3.1 but only the patch digit moved (or vice-versa), flag the
   mismatch so the bump level matches the change type.
 
-### 3.5 — Documentation summary
+### 3.5 — TypeScript typing
+
+Check changed TypeScript files for inline string literal unions that should be extracted to a `.types.ts` file:
+
+```bash
+git diff origin/development...HEAD --name-only | grep '\.ts$' | while read f; do
+  git show HEAD:"$f" 2>/dev/null | grep -qE "computed<'[^']+'\s*\|" && echo "$f"
+done
+```
+
+Also check that enum definitions live in `.types.ts` and not in `.component.ts` or `.const.ts`:
+
+```bash
+git diff origin/development...HEAD --name-only | grep -v '\.types\.ts$' | while read f; do
+  git show HEAD:"$f" 2>/dev/null | grep -q '^export enum ' && echo "$f"
+done
+```
+
+- No violations → `✓ TypeScript typing`
+- Inline union found in a non-types file → flag:
+  ```
+  📄 Inline string literal union found in <file>.
+     → Extract to a colocated <name>.types.ts file.
+  ```
+- Enum defined outside a `.types.ts` file → flag:
+  ```
+  📄 Enum defined in <file> — enums belong in *.types.ts.
+     → Move the enum to <name>.types.ts.
+  ```
+
+### 3.7 — Documentation summary
 
 After scanning, show a summary:
 
@@ -222,6 +252,7 @@ After scanning, show a summary:
 ✓ Refinement doc present                  (or flag)
 ✓ No orphaned wiki files                  (or list of flagged ones)
 ✓ Version bumped for component changes    (or flag)
+✓ TypeScript typing clean                 (or list of flagged files)
 ```
 
 If flags were raised, ask:

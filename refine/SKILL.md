@@ -61,6 +61,62 @@ Before asking questions, explore the relevant parts of the codebase:
 - Understand existing patterns and conventions
 - Identify the domain and library type (`feature`, `ui`, `data`, `util`)
 
+### 2.5 — Figma audit + token JSON cross-check
+
+**Run both sub-steps before asking any clarifying questions.**
+
+#### Figma audit
+
+Check whether the ticket description or any linked resource contains a `figma.com/design/` URL.
+
+**If a Figma URL is found:**
+
+1. Extract `fileKey` and `nodeId` (convert `-` to `:` in nodeId).
+2. Call `mcp__claude_ai_Figma__get_screenshot` with `maxDimension: 1200` to render the node.
+3. Call `mcp__claude_ai_Figma__get_design_context` if Figma desktop is open on that node.
+4. Read the design carefully for:
+   - **All variant axes** (Size, Background, State, Orientation, …) and their exact string values — these become enum members.
+   - **Structural details** — slots, layout, placeholder behaviour.
+   - **Gaps vs. ticket AC** — anything visible in Figma not mentioned in the acceptance criteria.
+
+**If no Figma URL is found:**
+Add to Open Questions: `⚠ No Figma link in ticket — request design node URL from Chanell before implementation.`
+
+#### Token JSON cross-check
+
+Token files live at:
+`/Users/louisbonnaire/design-systems/component-library/packages/tokens/figma-source/`
+
+| File | Contents |
+|---|---|
+| `components.json` | Component-specific tokens (e.g. `buttonRadius`, `buttonPaddingXSm`) |
+| `semantics-core.json` | Semantic tokens (e.g. `colorSurfaceSubtle`, `radiusComponentSm`) |
+| `primitives.json` | Raw values (e.g. `space4=16`, `radius1=4`) |
+
+Run these checks:
+
+1. **Component tokens** — grep `components.json` for keys matching the component name (e.g. `logo`):
+   - Keys found → list them; the implementation must use these exact values, not hardcode equivalents.
+   - No keys found → note that `components.json` may need new entries; add as 🟡 Warning.
+
+2. **Consumed semantic tokens** — for each token the component references (from Figma or the planned SCSS contract), look up its value in `semantics-core.json` and verify it matches what Figma shows visually. Flag any mismatch as 🟡 Warning.
+
+3. **Missing tokens** — if Figma uses a value (size, color, radius) with no matching entry in any JSON file → flag as 🔴 Blocking; a new token must be added before implementation.
+
+#### Drift table
+
+Combine Figma and token findings into one table:
+
+```
+| Property          | Figma              | Token JSON / Doc    | Severity |
+|-------------------|--------------------|---------------------|----------|
+| Sizes             | large/medium/small | sm/md/lg/full       | 🔴 API mismatch |
+| Placeholder bg    | #eeecea            | colorSurfaceSubtle ✓| ✓ |
+| logoWidthLg token | 200px (visual)     | not in components.json | 🟡 Missing token |
+```
+
+Fold 🔴 items into clarifying questions in Step 3. Record all items in the `## Figma Audit` section of the refinement doc.
+
 ### 3. Clarify Scope
 
 Ask targeted questions to resolve ambiguity:
@@ -131,6 +187,16 @@ After refinement, generate a markdown document following this structure:
 
 ---
 
+## Figma Audit
+
+> Figma node: `figma.com/design/<fileKey>?node-id=<nodeId>` (or "not found")
+
+| Property | Figma | Ticket / Doc | Severity |
+|---|---|---|---|
+| [e.g. Sizes] | [Figma values] | [Doc values] | 🔴 / 🟡 / ✓ |
+
+---
+
 ## Open Questions
 
 - [ ] Question that needs follow-up
@@ -172,3 +238,12 @@ This skill works in both **[FE] Frontend Dev** and **[AG] Agent Building** modes
 - **Reference existing patterns**: Link to similar implementations in the codebase
 - **Consider testing early**: Identify test scenarios during refinement, not after implementation
 - **Timebox questions**: Don't ask more than 5 questions at once; batch them logically
+
+---
+
+## Next Step
+
+After the refinement doc is saved:
+```
+Run /implement [TICKET-ID] to start implementation following this refinement doc.
+```

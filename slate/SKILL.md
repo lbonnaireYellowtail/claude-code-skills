@@ -23,10 +23,13 @@ Manages `TICKETS.md` boards for any project. Every command begins by locating th
 <!-- prefix: XX -->
 
 ## In Progress   ← max 1 ticket
-## Ready         ← ordered: high → medium → low
+## Refined       ← refined (ADR/refinement doc exists, scoped); ready to build. ordered: high → medium → low
+## Ready         ← triaged but not yet refined. ordered: high → medium → low
 ## Blocked
 ## Done          ← newest at top
 ```
+
+`## Refined` is optional — boards created before it may not have it. When present, it sits between `## In Progress` and `## Ready`. A ticket moves Ready → Refined once a refinement doc or ADR exists for it (via `/refine`, `/ping-pong`, or manual triage).
 
 Each ticket block:
 ```
@@ -73,11 +76,11 @@ Pick the next ready ticket and move it to In Progress.
    > Already in progress: **[ID] Title**
    > Complete it with `/slate done` before picking another.
 
-2. **Find next ticket:** In `## Ready`, find the first ticket block (the text from `### [` to the closing `---` inclusive).
+2. **Find next ticket:** Prefer `## Refined` (if the board has that section) — find the first ticket block there (the text from `### [` to the closing `---` inclusive). If `## Refined` is absent or empty, fall back to `## Ready`; when falling back, warn: "No refined tickets — picking an unrefined ticket from Ready. Consider `/refine` or `/ping-pong` first."
 
-3. **If Ready is empty:** say "No ready tickets. Add one with `/slate new`." and stop.
+3. **If both Refined and Ready are empty:** say "No ready tickets. Add one with `/slate new`." and stop.
 
-4. **Move:** Remove the ticket block from `## Ready`. Paste it under `## In Progress` (after the header line, before the next H2).
+4. **Move:** Remove the ticket block from its source section. Paste it under `## In Progress` (after the header line, before the next H2).
 
 5. **Write** the updated TICKETS.md.
 
@@ -184,6 +187,24 @@ Break a ticket into smaller child tickets.
 
 ---
 
+## `/slate refine <ticket-id>`
+
+Move a ticket from Ready to Refined once it has a refinement doc or ADR.
+
+1. **Find** the ticket by `### [TICKET-ID]`. If not found, say "Ticket [ID] not found." and stop.
+
+2. **If the board has no `## Refined` section:** add one immediately after `## In Progress` (blank line before `## Ready`).
+
+3. **Move:** Remove the ticket block from `## Ready` (or wherever it lives) and insert into `## Refined` in priority order (high → medium → low), same ordering rule as `/slate new`.
+
+4. **Optionally** append a `⏳ Refined YYYY-MM-DD` line with the ADR/doc path to the ticket's Notes (ask if the doc path isn't obvious).
+
+5. **Write** and print: `Refined: [SL-NNN] Title → moved to Refined (ADR/doc: ...)`.
+
+`/refine` and `/ping-pong` should call this transition when they finish producing a refinement doc.
+
+---
+
 ## `/slate status`
 
 Print a compact board overview.
@@ -192,13 +213,14 @@ Print a compact board overview.
 
 2. Find the current in-progress ticket title (if any).
 
-3. Find the next ready ticket title (first `### [` in `## Ready`).
+3. Find the next buildable ticket title (first `### [` in `## Refined`, else first in `## Ready`).
 
-4. Print:
+4. Print (omit the `Refined` row if the board has no such section):
    ```
    ── Slate Board ─────────────────────
    In Progress : 1  →  [SL-003] Write /slate pick and /slate done
-   Ready       : 4  →  next: [SL-004] Write /slate new and /slate slice
+   Refined     : 3  →  next: [SL-007] Pluggable DB adapter
+   Ready       : 4  →  [SL-004] Write /slate new and /slate slice
    Blocked     : 0
    Done        : 2
    ────────────────────────────────────
@@ -224,6 +246,8 @@ Set up Slate in the current project. Creates `TICKETS.md` and `STANDARDS.md`.
    <!-- prefix: XX -->
 
    ## In Progress
+
+   ## Refined
 
    ## Ready
 
