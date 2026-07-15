@@ -68,6 +68,16 @@ Then invoke with `/skill-name` in any Claude Code session.
 
 ---
 
+## Scripts
+
+Standalone helper scripts (not skills) that plug into Claude Code via `settings.json`. Each has its own README with install steps.
+
+| Script | Description |
+|---|---|
+| [`scripts/statusline`](scripts/statusline/) | Usage-gauge statusline — context fill, 5h/7d rate limits, model — with cross-session rate-limit sync across all open terminals |
+
+---
+
 ## Contributing
 
 Skills are markdown files with a YAML frontmatter block. See any existing `SKILL.md` for the format.
