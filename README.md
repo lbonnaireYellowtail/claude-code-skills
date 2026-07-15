@@ -1,5 +1,7 @@
 # Shared Claude Code Skills
 
+[![version](https://img.shields.io/badge/version-1.1.0-blue)](https://github.com/lbonnaireYellowtail/claude-code-skills/releases/latest) [![changelog](https://img.shields.io/badge/changelog-md-lightgrey)](CHANGELOG.md)
+
 A collection of reusable Claude Code skills for frontend development, AI/agent building, documentation, and workflow automation. These are project-agnostic and can be dropped into any Claude Code setup.
 
 ## Installation
